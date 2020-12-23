@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+
+set -x
+
+if [ $# -ne 4 ];
+then
+ echo multip4 [distro] [diskimage] [disk] [name]
+ exit 1
+fi
+
+distro="$1"
+diskimage="$2"
+disk="$3"
+name="$4"
+
+rm -rf /tmp/multipi4
+mkdir /tmp/multipi4
+cd /tmp/multipi4
+
+umount ${disk}1
+umount ${disk}2
+umount ${disk}3
+
+apt install -y git
+git clone https://github.com/raspberrypisig/usb-msd-raspberrypi-multios multios
+
+distrodir="multios/btrfs/distros/${distro}"
+setupscript=$distrodir/setup.sh
+bootdir="$distrodir/boot"
+linuxdir="$distrodir/linux"
+
+createsubvolumename() {
+  name="$1"
+  typeset -l newvolname
+  newvolname=${name// /_}
+  newvolname=${newvolname//./__}
+  echo @$newvolname  
+}
+
+runcontainer() {
+setupscript="$1"
+containerdir="$2"
+volname="$3"
+apt install -y qemu qemu-user-static binfmt-support systemd-container
+
+chmod +x $setupscript
+cp $setupscript usb3/$volname
+systemd-nspawn -D $containerdir /setup.sh $volname
+rm usb3/$volname/setup.sh
+}
+
+if [ -d $distrodir ];
+then
+  mkdir -p {p1,p2,usb2,usb3}
+  mount ${disk}2 usb2
+  mount ${disk}3 usb3
+  cd usb3
+  volname=$(createsubvolumename "$name")
+  btrfs subvolume create $volname
+  cd ..
+  
+  if [ -f ${distrodir}/copy.sh ];
+  then
+    ${distrodir}/copy.sh $diskimage usb3/${volname} $volname
+  else  
+
+  loop=$(losetup --show -Pf $diskimage)
+  mount -o ro ${loop}p1 p1 
+  mount -o ro ${loop}p2 p2
+  rsync -a p2/ usb3/${volname}
+  
+  fi
+  
+  if [ -d usb3/${volname}/boot/firmware ];
+  then
+  cp -r p1/* usb3/${volname}/boot/firmware
+  cp -r ${bootdir}/* usb3/$volname/boot/firmware  
+  else
+  cp -r p1/* usb3/${volname}/boot
+  cp -r ${bootdir}/* usb3/$volname/boot
+  fi
+  
+  rsync -a "$linuxdir/" usb3/$volname
+
+  
+
+  runcontainer $setupscript usb3/${volname} $volname
+  echo "$name" >> usb2/oslist.txt
+  if [ ! -f ${distrodir}/copy.sh ];
+  then
+  umount {p1,p2,usb2,usb3}
+  rm -rf {p1,p2,usb2,usb3}
+  losetup -D $loop
+  fi  
+
+fi
+
+rm -rf multios
+echo Sleep for 20 seconds
+sleep 20

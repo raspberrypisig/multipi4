@@ -1,0 +1,15 @@
+[Unit]
+Description=OS Chooser
+After= getty.target
+Conflicts=getty@tty1.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/bash /OS-CHOOSER.sh
+StandardInput=tty-force
+StandardOutput=inherit
+StandardError=inherit
+
+[Install]
+WantedBy=multi-user.target

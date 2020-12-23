@@ -1,0 +1,1 @@
+console=ttyAMA0,115200 console=tty1 root=/dev/sda3 rootfstype=btrfs rootflags=subvol=PLACEHOLDER elevator=deadline rootwait verbose

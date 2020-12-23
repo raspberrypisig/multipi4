@@ -1,0 +1,3 @@
+[all]
+arm_64bit=1
+initramfs initrd.img followkernel

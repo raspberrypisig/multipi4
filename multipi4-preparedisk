@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+set -x
+
+if [ $# -ne 2 ];
+then
+ echo $0 [raspbian_lite_image] [usb_disk]
+ exit 1
+fi
+
+raspbian_image="$1"
+usb_disk="$2"
+fat32_partition_size=300
+
+rm -rf /tmp/multipi4
+mkdir /tmp/multipi4
+cd /tmp/multipi4
+
+mount|grep $usb_disk|awk '{print $1}'|xargs umount
+
+prepare_empty_disk() {
+
+raspbian_image="$1"
+usb_disk="$2"
+second_partition_size="$3"
+
+sfdisk -f $usb_disk <<EOF
+label: dos
+,${fat32_partition_size}MiB,c
+,${fat32_partition_size}MiB,c
+,,83
+EOF
+
+partprobe "${usb_disk}"
+sleep 1
+mkfs.vfat "${usb_disk}1"
+mkfs.vfat -n MULTIPI4 "${usb_disk}2"
+mkfs.btrfs -f "${usb_disk}3"
+
+loop=$(losetup --show -Pf $raspbian_image)
+
+mkdir -p {p1,p2,usb1,usb3}
+mount -o ro ${loop}p1 p1
+mount -o ro ${loop}p2 p2
+mount ${usb_disk}1 usb1
+mount ${usb_disk}3 usb3
+cd usb3
+btrfs subvolume create @boot
+cd ..
+cp -r p1/* usb1
+rsync -a p2/ usb3/@boot
+
+umount {p1,p2,usb1,usb3}
+rm -rf {p1,p2,usb1,usb3}
+losetup -D $loop
+
+}
+
+prepare_boot_os() {
+
+disk="$1"
+bootfiles=multios/btrfs/distros/boot/boot
+linuxfiles=multios/btrfs/distros/boot/linux
+setupscript=multios/btrfs/distros/boot/setup.sh
+
+apt install -y qemu qemu-user-static binfmt-support systemd-container git subversion
+git clone https://github.com/raspberrypisig/usb-msd-raspberrypi-multios multios
+
+
+mkdir -p {usb1,usb2,usb3}
+
+mount ${disk}1 usb1
+mount ${disk}2 usb2
+mount -t btrfs -o subvol=@boot ${disk}3 usb3
+
+cp -r $bootfiles/* usb1
+rsync -a $linuxfiles/ usb3
+
+chmod +x $setupscript
+cp $setupscript usb3
+systemd-nspawn -D usb3 /setup.sh
+cp usb3/initramfs-btrfs usb1
+rm usb3/initramfs-btrfs
+rm usb3/setup.sh
+
+svn co https://github.com/raspberrypi/firmware/trunk/boot
+cp boot/start* boot/fixup* usb2
+cp boot/start* boot/fixup* usb1
+rm -rf boot
+
+umount {usb1,usb2,usb3}
+rm -rf {usb1,usb2,usb3,multios}
+
+}
+
+prepare_empty_disk $raspbian_image $usb_disk $second_partition_size
+prepare_boot_os $usb_disk
+
