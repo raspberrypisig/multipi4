@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -x
+
+
+diskinfo() {
+usb=$(ls /dev/disk/by-id/usb* 2>/dev/null)
+ata=$(ls /dev/disk/by-id/ata* 2>/dev/null)
+
+usbdevices=$(readlink -m -f $usb $ata|sed -r  '/[0-9]+/d'|sort)
+
+for usbdisk in $usbdevices
+do
+  model=$(udevadm info $usbdisk|grep ID_MODEL=|cut -f2- -d'=')
+  vendor=$(udevadm info $usbdisk|grep ID_VENDOR=|cut -f2- -d'=')
+  capacity=$(fdisk -l $usbdisk|head -n1|awk '{print $3 " " $4}'|cut -f1 -d',')
+  if [ ! $vendor ];
+  then
+  echo "${usbdisk}: $model $capacity"  
+  else
+  echo "${usbdisk}: $vendor $model $capacity"
+  fi
+done
+
+}
+
+
+
+listdisks() {
+output="$(diskinfo | yad --center --borders=30 --title='MultiPi4' --width=600 --height=400 --no-headers --buttons-layout=center  \
+        --text="\nPlease select drive to make into a multiboot Pi disk\n" --text-align=center  \
+        --list --separator='\n'  \
+        --column=:Name --print-column=1 \
+        --button=Select:0 \
+        --button=Cancel:1 \
+        )"
+
+#buttonpressed=$?
+#if [ $buttonpressed -eq 0  ];
+#then
+#echo $output
+#disk=$(echo $output | cut -f1 -d':')
+#bash existingmultipi4.sh $disk
+#existing=$?
+
+#if [ $existing -eq 0 ];
+#then
+#  bash main.sh $disk
+#else
+#  bash 2.sh $disk
+#fi
+
+
+
+#else
+#exit 1
+#fi
+
+}
+
+listdisks

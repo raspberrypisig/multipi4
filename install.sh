@@ -9,18 +9,19 @@ cd multipi4
 cp multipi4* /usr/local/bin
 sudo rsync -av etc/ /etc
 
-mkdir -p ~/.local/share/applications
+mkdir -p ~/.local/share/{icons,applications}
 APP=/usr/local/bin/multipi4-gui
-ICON=/usr/local/share/multipi4.png
+ICON=~/.local/share/icons/multipi4.png
 
 cp multipi4.png $ICON
 
 echo "[Desktop Entry]
 Name=MultiPi4
 Comment=MultiBoot Raspberry Pi 4
-Exec=${APP}
+Exec=/usr/bin/sudo DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY ${APP}
 Icon=${ICON}
 Terminal=false
 Type=Application
 Categories=Utility;" > ~/.local/share/applications/pi-apps.desktop
 
+rm -rf /tmp/multipi4
