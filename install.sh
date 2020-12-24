@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+set -x
 sudo apt update
 sudo apt install -y yad git
 
@@ -7,6 +7,7 @@ rm -rf /tmp/multipi4
 mkdir -p /tmp/multipi4
 cd /tmp
 git clone -b dev https://github.com/raspberrypisig/multipi4
+cd multipi4
 cp multipi4* /usr/local/bin
 sudo rsync -av etc/ /etc
 
