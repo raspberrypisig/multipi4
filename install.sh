@@ -8,7 +8,7 @@ mkdir -p /tmp/multipi4
 cd /tmp
 git clone -b dev https://github.com/raspberrypisig/multipi4
 cd multipi4
-sudo cp multipi4* /usr/local/bin
+sudo cp {multipi4,multipi4-gui,multipi4-preparedisk} /usr/local/bin
 sudo rsync -av etc/ /etc
 
 mkdir -p ~/.local/share/{icons,applications}
