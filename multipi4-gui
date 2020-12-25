@@ -3,10 +3,10 @@ set -x
 
 
 diskinfo() {
-usb=$(ls /dev/disk/by-id/usb* 2>/dev/null)
-ata=$(ls /dev/disk/by-id/ata* 2>/dev/null)
+local usb=$(ls /dev/disk/by-id/usb* 2>/dev/null)
+local ata=$(ls /dev/disk/by-id/ata* 2>/dev/null)
 
-usbdevices=$(readlink -m -f $usb $ata|sed -r  '/[0-9]+/d'|sort)
+local usbdevices=$(readlink -m -f $usb $ata|sed -r  '/[0-9]+/d'|sort)
 
 for usbdisk in $usbdevices
 do
@@ -23,7 +23,199 @@ done
 
 }
 
+existingmultipi4() {
+local disk="$1"
 
+local partitions=$(fdisk -l  $disk | sed -n '/Type/,$p'|sed -n '2,$p'|awk '{print $1}')
+#echo "$partitions"
+local numberofpartitions=$(echo -en "$partitions" | wc -l)
+numberofpartitions=$(( numberofpartitions + 1  ))
+#echo $numberofpartitions
+
+if [ $numberofpartitions -ne 3 ];
+then
+exit 1
+fi
+
+local partitiontypes=$(blkid|grep $disk|sed -r 's/.*TYPE="([^"]*)(.*)/\1/')
+readarray -t parray <<<$partitiontypes
+#declare -p parray
+
+local existingtypes=("vfat" "vfat" "btrfs")
+local A=${partitiontypes[@]}
+local B=${existingtypes[@]}
+
+if [ "$A" != "$B"  ];
+then
+exit 1
+fi
+  
+}
+
+addos() {
+disk="$1"
+
+declare -A ary
+
+basedistros=
+
+while IFS== read -r key value; do
+  ary["$key"]="$value"
+  basedistros+="${key}\!"
+done < basedistros.txt
+
+basedistros=${basedistros::-1}
+
+output="$(yad --width=600 --center --height=400 --buttons-layout=center --title="Multipi4 - Add OS" --text="Add OS" \
+--image="/usr/share/icons/Tango/scalable/emotes/face-smile.svg" \
+--form  \
+--field=Name "" \
+--field="Base distro":CB \
+"$basedistros" \
+--field="Image(*.img)":SFL  \
+--button="OK:0" \
+--button="Cancel:1" \
+)"
+
+
+buttonpressed=$?
+if [ $buttonpressed -eq 0  ];
+then
+#echo $output
+name=$(echo $output | cut -f1 -d'|')
+basedistro=$(echo $output | cut -f2 -d'|')
+image=$(echo $output | cut -f3 -d'|')
+#echo $name
+#echo $basedistro
+#echo $image
+#bash multipi4 "$basedistro" "$image" "$disk" "$name" 
+gnome-terminal --wait -- multipi4 ${ary["$basedistro"]} "$image" "$disk" "$name"
+status=$?
+if [ $status -eq 0 ];
+then
+  echo "Finished."
+  
+else
+  echo "Something went wrong."
+fi
+
+pipefile=/tmp/multip4.fifo
+#echo -e "\f" > $pipefile &
+mkdir -p /tmp/multipi4/distros
+mount ${disk}2 /tmp/multipi4/distros
+oslist=$(cat /tmp/multipi4/distros/oslist.txt)
+umount ${disk}2
+(
+echo -e "\f" > /tmp/multipi4.fifo
+echo -e "$oslist" > /tmp/multipi4.fifo
+)
+echo [info] Sleep for 20 seconds
+sleep 20
+exit 0
+else
+exit 1
+fi
+
+  
+}
+
+multipi4_main() {
+disk="$1"
+
+
+
+pipefile=/tmp/multipi4.fifo
+selectedos=/tmp/multipi4.selection
+fd=4
+
+rm -f $pipefile
+rm -f $selectedos
+
+
+mkfifo $pipefile
+touch $selectedos
+
+mkdir -p /tmp/multipi4/distros
+mount ${disk}2 /tmp/multipi4/distros
+
+if [ ! -f /tmp/multipi4/distros/oslist.txt ];
+then
+oslist=
+else
+oslist=$(cat /tmp/multipi4/distros/oslist.txt)
+fi
+
+
+exec 4<> $pipefile
+
+
+echo $oslist
+umount ${disk}2
+echo -e "\f" > $pipefile &
+sleep 1
+echo -e "$oslist" > $pipefile &
+
+
+output="$(yad --center --borders=10 --title='MultiPi4' --width=600 --height=400 --no-headers --buttons-layout=center --kill-parent  \
+        --text="\nInstalled OS List\n" --text-align=center  \
+        --list --separator='\n'  \
+        --column=:Name --print-column=1 \
+        --select-action="/bin/sh -c \"printf \%\s'\n' %s > $selectedos \"" \
+        --button="Add OS:bash addos.sh $disk" \
+        --button="Move Up:bash moveup.sh $disk" \
+        --button="Move Down:bash movedown.sh $disk" \
+        --button="Edit:bash edit.sh $disk" \
+        <&4 ) "
+
+
+}
+
+preparedisk() {
+
+disk="$1"
+
+output=$(yad --center --borders=15 --text "Raspbian Lite is needed for preparing multiboot Pi.\n Raspbian Lite image is usually named something like\n2020-08-20-raspios-buster-armhf-lite.img" \
+       --text-align=center --form --field="Raspbian Image:SFL")
+buttonpressed=$?
+
+if [ $buttonpressed -eq 0 ];
+then
+raspbianimg=$(echo $output|sed  's/|//')
+gnome-terminal --wait -- multipi4-preparedisk "$raspbianimg" "$disk"
+status=$?
+if [ $status -eq 0 ];
+then
+  echo "Finished."
+else
+  echo "Something went wrong."
+fi
+
+multipi4_main $disk
+
+else
+exit 1
+fi
+
+}
+
+
+wipedisk() {
+disk="$1"
+
+output="$(yad --center --borders=10 \
+         --text "You selected disk: ${disk}.\nThe data on the disk will need to be deleted.\nData will be DESTROYED on disk.\nPress OK to proceed. Press cancel to exit. "
+)"
+
+buttonpressed=$?
+
+if [ $buttonpressed -eq 0 ];
+then
+preparedisk $disk
+else
+exit 1
+fi
+
+}
 
 listdisks() {
 output="$(diskinfo | yad --center --borders=30 --title='MultiPi4' --width=600 --height=400 --no-headers --buttons-layout=center  \
@@ -34,20 +226,20 @@ output="$(diskinfo | yad --center --borders=30 --title='MultiPi4' --width=600 --
         --button=Cancel:1 \
         )"
 
-#buttonpressed=$?
-#if [ $buttonpressed -eq 0  ];
-#then
+buttonpressed=$?
+if [ $buttonpressed -eq 0  ];
+then
 #echo $output
-#disk=$(echo $output | cut -f1 -d':')
-#bash existingmultipi4.sh $disk
-#existing=$?
+disk=$(echo $output | cut -f1 -d':')
+existingmultipi4 $disk
+existing=$?
 
-#if [ $existing -eq 0 ];
-#then
-#  bash main.sh $disk
-#else
-#  bash 2.sh $disk
-#fi
+if [ $existing -eq 0 ];
+then
+  osesinstalled $disk
+else
+  wipedisk $disk
+fi
 
 
 
