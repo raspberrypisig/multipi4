@@ -34,7 +34,7 @@ numberofpartitions=$(( numberofpartitions + 1  ))
 
 if [ $numberofpartitions -ne 3 ];
 then
-exit 1
+return 1
 fi
 
 local partitiontypes=$(blkid|grep $disk|sed -r 's/.*TYPE="([^"]*)(.*)/\1/')
@@ -47,9 +47,9 @@ local B=${existingtypes[@]}
 
 if [ "$A" != "$B"  ];
 then
-exit 1
+return 1
 fi
-  
+return 0  
 }
 
 addos() {
