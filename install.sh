@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -x
 sudo apt update
-sudo apt install -y yad git gnome-terminal
+sudo apt install -y yad git gnome-terminal btrfs-progs
 
 rm -rf /tmp/multipi4
 mkdir -p /tmp/multipi4
