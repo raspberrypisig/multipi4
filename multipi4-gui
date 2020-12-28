@@ -52,6 +52,91 @@ fi
 return 0  
 }
 
+moveup() {
+
+disk="$1"
+
+mount ${disk}2 /tmp/multipi4/distros
+
+selectedos=$(cat /tmp/multipi4.selection)
+oslistfile=/tmp/multipi4/distros/oslist.txt
+#cat $oslistfile
+
+linenumber=$(grep -n "$selectedos" $oslistfile | cut -f1 -d':')
+
+if [ $linenumber -eq 1 ];
+then
+umount ${disk}2
+exit 0
+fi
+
+echo -e "\f" > /tmp/multipi4.fifo 
+
+newlist=$(awk "!/$selectedos/ { if (NR > 1) print prev; prev=\$0} /$selectedos/ {print \$0;} END {print prev}" < /tmp/multipi4/distros/oslist.txt)
+echo $newlist
+num=$(echo $newlist|wc -l)
+echo $num
+echo -e "$newlist" > /tmp/multipi4.fifo 
+echo  "$newlist" > $oslistfile
+umount ${disk}2
+
+}
+
+movedown() {
+
+disk="$1"
+
+mount ${disk}2 /tmp/multipi4/distros
+
+selectedos=$(cat /tmp/multipi4.selection)
+oslistfile=/tmp/multipi4/distros/oslist.txt
+
+linenumber=$(grep -n "$selectedos" $oslistfile | cut -f1 -d':')
+linecount=$(cat $oslistfile| wc -l)
+
+
+if [ $linenumber -eq $linecount ];
+then
+umount ${disk}2
+exit 0
+fi
+
+
+echo -e "\f" > /tmp/multipi4.fifo 
+
+newlist=$(sed -n "/$selectedos/{h;n;p;g};p" /tmp/multipi4/distros/oslist.txt)
+echo $newlist
+num=$(echo $newlist|wc -l)
+echo $num
+echo -e "$newlist" > /tmp/multipi4.fifo 
+echo  "$newlist" > $oslistfile
+umount ${disk}2
+
+}
+
+edit() {
+
+disk="$1"
+
+selectedos=$(cat /tmp/multipi4.selection)
+
+
+output="$(yad --center --borders=10 \
+         --text "OS: $selectedos" \
+         --button "Cancel:0" \
+         --button "Delete:1" \
+)"
+
+buttonpressed=$?
+
+if [ $buttonpressed -eq 1 ];
+then
+gnome-terminal --wait -- bash ./delete.sh "$disk" "$selectedos"
+fi
+echo "sleep for 20 seconds"
+sleep 20  
+}
+
 addos() {
 disk="$1"
 
@@ -161,10 +246,10 @@ output="$(yad --center --borders=10 --title='MultiPi4' --width=600 --height=400 
         --list --separator='\n'  \
         --column=:Name --print-column=1 \
         --select-action="/bin/sh -c \"printf \%\s'\n' %s > $selectedos \"" \
-        --button="Add OS:bash addos.sh $disk" \
-        --button="Move Up:bash moveup.sh $disk" \
-        --button="Move Down:bash movedown.sh $disk" \
-        --button="Edit:bash edit.sh $disk" \
+        --button="Add OS:bash addos $disk" \
+        --button="Move Up:bash moveup $disk" \
+        --button="Move Down:bash movedown $disk" \
+        --button="Edit:bash edit $disk" \
         <&4 ) "
 
 
