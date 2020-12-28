@@ -24,7 +24,7 @@ umount ${disk}3
 #apt install -y git
 #git clone https://github.com/raspberrypisig/usb-msd-raspberrypi-multios multios
 
-distrodir="/etc/multipi4/distros/${distro}"
+distrodir="/etc/multipi4/${distro}"
 setupscript=$distrodir/setup.sh
 bootdir="$distrodir/boot"
 linuxdir="$distrodir/linux"
