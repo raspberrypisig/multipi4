@@ -28,3 +28,12 @@ Categories=Utility;" > ~/.local/share/applications/pi-apps.desktop
 
 rm -rf /tmp/multipi4
 
+echo "---------------------------------------------
+INSTALLATION COMPLETE.
+---------------------------------------------------
+
+You can now open MultiPi4 using Menu->Accessories->MultiPi4
+" 
+
+
+
