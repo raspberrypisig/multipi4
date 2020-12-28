@@ -281,10 +281,10 @@ output="$(yad --center --borders=10 --title='MultiPi4' --width=600 --height=400 
         --list --separator='\n'  \
         --column=:Name --print-column=1 \
         --select-action="/bin/sh -c \"printf \%\s'\n' %s > $selectedos \"" \
-        --button="Add OS:bash addos $disk" \
-        --button="Move Up:bash moveup $disk" \
-        --button="Move Down:bash movedown $disk" \
-        --button="Edit:bash edit $disk" \
+        --button="Add OS:addos $disk" \
+        --button="Move Up:moveup $disk" \
+        --button="Move Down:movedown $disk" \
+        --button="Edit:edit $disk" \
         <&4 ) "
 
 
