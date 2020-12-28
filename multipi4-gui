@@ -42,7 +42,7 @@ readarray -t parray <<<$partitiontypes
 #declare -p parray
 
 local existingtypes=("vfat" "vfat" "btrfs")
-local A=${partitiontypes[@]}
+local A=$(echo $partitiontypes)
 local B=${existingtypes[@]}
 
 if [ "$A" != "$B"  ];
@@ -356,7 +356,7 @@ existing=$?
 
 if [ $existing -eq 0 ];
 then
-  osesinstalled $disk
+  multipi4_main $disk
 else
   wipedisk $disk
 fi
