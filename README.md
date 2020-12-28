@@ -11,6 +11,9 @@ My strong recommendation is boot from a SD card running Raspberry Pi OS 64-bit d
 curl -sSL https://bit.ly/37I1glx | bash -
 ```
 
+# Prerequisites
+- At a minimum, you need to download Raspberry Pi OS Lite (unzipped), and any other supported os image you want to install (also unzipped)
+
 # Starting software
 
 Menu->Accessories->MultiPi4
@@ -18,7 +21,7 @@ Menu->Accessories->MultiPi4
 
 # OS Support
 
-Currently, the following OS can be installed:
+Currently, the following operating systems can be installed:
 
 - All variants of Raspberry Pi OS(Lite, Desktop) and any distro based on it (eg. Retropie)
 - Ubuntu (Server,Desktop)
