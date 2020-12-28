@@ -98,7 +98,7 @@ linecount=$(cat $oslistfile| wc -l)
 if [ $linenumber -eq $linecount ];
 then
 umount ${disk}2
-exit 0
+return
 fi
 
 
@@ -112,6 +112,41 @@ echo -e "$newlist" > /tmp/multipi4.fifo
 echo  "$newlist" > $oslistfile
 umount ${disk}2
 
+}
+
+createsubvolumename() {
+  name="$1"
+  typeset -l newvolname
+  newvolname=${name// /_}
+  newvolname=${newvolname//./__}
+  echo @$newvolname  
+}
+
+delete() {
+
+disk="$1"
+selectedos="$2"
+
+echo $selectedos
+echo $disk
+mkdir -p /tmp/multipi4/deleting3
+mkdir -p /tmp/multipi4/deleting2
+mount ${disk}2 /tmp/multipi4/deleting2
+mount ${disk}3 /tmp/multipi4/deleting3
+vol=$(createsubvolumename "$selectedos") 
+rm -rf /tmp/multipi4/deleting3/$vol
+oslist=$(sed "/^$selectedos\$/d" /tmp/multipi4/deleting2/oslist.txt)
+sed -i "/^$selectedos\$/d" /tmp/multipi4/deleting2/oslist.txt
+(
+echo -e "\f" > /tmp/multipi4.fifo
+echo -e "$oslist" > /tmp/multipi4.fifo
+)
+echo "Sleeping for 20 seconds"
+sleep 20
+umount ${disk}2
+umount ${disk}3
+
+  
 }
 
 edit() {
@@ -131,7 +166,7 @@ buttonpressed=$?
 
 if [ $buttonpressed -eq 1 ];
 then
-gnome-terminal --wait -- bash ./delete.sh "$disk" "$selectedos"
+gnome-terminal --wait -- bash delete "$disk" "$selectedos"
 fi
 echo "sleep for 20 seconds"
 sleep 20  
@@ -147,7 +182,7 @@ basedistros=
 while IFS== read -r key value; do
   ary["$key"]="$value"
   basedistros+="${key}\!"
-done < basedistros.txt
+done < /etc/multipi4/basedistros.txt
 
 basedistros=${basedistros::-1}
 
@@ -196,9 +231,9 @@ echo -e "$oslist" > /tmp/multipi4.fifo
 )
 echo [info] Sleep for 20 seconds
 sleep 20
-exit 0
+return 0
 else
-exit 1
+return 1
 fi
 
   
