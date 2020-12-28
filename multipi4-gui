@@ -375,7 +375,7 @@ fi
 
 if [ $# -gt 1 ];
 then
-  local mainarg=$1
+  mainarg=$1
   shift
   $mainarg $@
 else 
