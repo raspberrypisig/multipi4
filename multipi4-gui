@@ -373,7 +373,7 @@ fi
 
 }
 
-if [ $# -gt 0 ];
+if [ $# -gt 1 ];
 then
   local mainarg=$1
   shift
