@@ -3,8 +3,8 @@ set -x
 sudo apt update
 sudo apt install -y yad git gnome-terminal btrfs-progs
 
-rm -rf /tmp/multipi4
-mkdir -p /tmp/multipi4
+sudo rm -rf /tmp/multipi4
+
 cd /tmp
 git clone -b dev https://github.com/raspberrypisig/multipi4
 cd multipi4
@@ -26,7 +26,7 @@ Terminal=false
 Type=Application
 Categories=Utility;" > ~/.local/share/applications/pi-apps.desktop
 
-rm -rf /tmp/multipi4
+sudo rm -rf /tmp/multipi4
 
 echo "---------------------------------------------
 INSTALLATION COMPLETE.
