@@ -149,7 +149,7 @@ umount ${disk}3
   
 }
 
-edit() {
+editos() {
 
 disk="$1"
 
@@ -171,6 +171,10 @@ fi
 echo "sleep for 20 seconds"
 sleep 20  
 }
+
+
+
+
 
 addos() {
 disk="$1"
@@ -281,10 +285,10 @@ output="$(yad --center --borders=10 --title='MultiPi4' --width=600 --height=400 
         --list --separator='\n'  \
         --column=:Name --print-column=1 \
         --select-action="/bin/sh -c \"printf \%\s'\n' %s > $selectedos \"" \
-        --button="Add OS:addos $disk" \
-        --button="Move Up:moveup $disk" \
-        --button="Move Down:movedown $disk" \
-        --button="Edit:edit $disk" \
+        --button="Add OS:bash multipi4-gui addos $disk" \
+        --button="Move Up:bash multipi4-gui moveup $disk" \
+        --button="Move Down:bash multipi4-gui movedown $disk" \
+        --button="Edit:bash multipi4-gui editos $disk" \
         <&4 ) "
 
 
@@ -369,4 +373,15 @@ fi
 
 }
 
+if [ $# -gt 0 ];
+then
+  local mainarg=$1
+  shift
+  $mainarg $@
+else 
 listdisks
+fi
+
+
+
+
