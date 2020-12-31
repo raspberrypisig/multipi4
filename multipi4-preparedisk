@@ -42,7 +42,12 @@ prepare_first_partition() {
 usb_disk="$1"
 git clone https://github.com/raspberrypisig/multipi4-alpineboot
 cd multipi4-alpineboot
-./setup.sh $usb_disk
+./setup.sh
+TEMP_BOOT=/tmp/multipi4/alpine
+mkdir -p usb2
+mount ${usb_disk}2 usb2
+cp -rv $TEMP_BOOT/rpi/* usb2
+umount usb2
 cd ..
 }
 
