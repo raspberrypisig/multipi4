@@ -298,26 +298,14 @@ preparedisk() {
 
 disk="$1"
 
-output=$(yad --center --borders=15 --text "Raspbian Lite is needed for preparing multiboot Pi.\n Raspbian Lite image is usually named something like\n2020-08-20-raspios-buster-armhf-lite.img" \
-       --text-align=center --form --field="Raspbian Image:SFL")
-buttonpressed=$?
-
-if [ $buttonpressed -eq 0 ];
-then
-raspbianimg=$(echo $output|sed  's/|//')
-gnome-terminal --wait -- multipi4-preparedisk "$raspbianimg" "$disk"
+gnome-terminal --wait -- multipi4-preparedisk "$disk"
 status=$?
 if [ $status -eq 0 ];
 then
   echo "Finished."
+  multipi4_main $disk
 else
   echo "Something went wrong."
-fi
-
-multipi4_main $disk
-
-else
-exit 1
 fi
 
 }
