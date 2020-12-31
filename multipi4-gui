@@ -303,6 +303,12 @@ status=$?
 if [ $status -eq 0 ];
 then
   echo "Finished."
+  local FIRST_TEMP_DIR=/tmp/multipi4/alpine/usb1
+  rm -rf $FIRST_TEMP_DIR
+  mkdir -p $FIRST_TEMP_DIR
+  mount ${disk}1 $FIRST_TEMP_DIR
+  cp -rv /tmp/multipi4/alpine/rpi/* /tmp/multipi4/alpine/usb1
+  umount $FIRST_TEMP_DIR
   multipi4_main $disk
 else
   echo "Something went wrong."
