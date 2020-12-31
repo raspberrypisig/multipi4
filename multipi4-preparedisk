@@ -39,9 +39,10 @@ mkfs.btrfs -f "${usb_disk}3"
 }
 
 prepare_first_partition() {
+usb_disk="$1"
 git clone https://github.com/raspberrypisig/multipi4-alpineboot
 cd multipi4-alpineboot
-./setup.sh
+./setup.sh $usb_disk
 cd ..
 }
 
