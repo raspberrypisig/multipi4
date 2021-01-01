@@ -2,7 +2,7 @@
 
 set -x
 
-if [ $# -ne 2 ];
+if [ $# -ne 1 ];
 then
  echo $0 [usb_disk]
  exit 1
