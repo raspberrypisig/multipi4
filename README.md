@@ -14,7 +14,7 @@ curl -sSL https://bit.ly/37I1glx | bash -
 ```
 
 # Prerequisites
-- At a minimum, you need to download Raspberry Pi OS Lite (unzipped), and any other supported os image you want to install (also unzipped)
+- You need the OSes you want to install already downloaded and unzipped.
 
 # Starting software
 
