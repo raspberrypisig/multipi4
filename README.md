@@ -7,6 +7,8 @@ My strong recommendation is boot from a SD card running Raspberry Pi OS 64-bit d
 # Installation
 
 
+Run the following command as normal user(eg.pi), not root user:
+
 ```sh
 curl -sSL https://bit.ly/37I1glx | bash -
 ```
