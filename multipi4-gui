@@ -166,7 +166,7 @@ buttonpressed=$?
 
 if [ $buttonpressed -eq 1 ];
 then
-gnome-terminal --wait -- bash delete "$disk" "$selectedos"
+gnome-terminal --wait -- bash multipi4-gui delete "$disk" "$selectedos"
 fi
 echo "sleep for 20 seconds"
 sleep 20  
@@ -371,7 +371,7 @@ if [ $# -gt 1 ];
 then
   mainarg=$1
   shift
-  $mainarg $@
+  $mainarg "$@"
 else 
 listdisks
 fi
