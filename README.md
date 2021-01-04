@@ -31,9 +31,12 @@ Currently, the following operating systems can be installed:
 # How It Works
 
 * Creates three partitions on your USB/SSD drive
-    1. FAT32 partition containing the boot files of Raspberry Pi OS Lite (boot OS) 
+    1. FAT32 partition containing the boot files of Alpine OS (boot OS). 
+       When you powerup your Pi with USB/SSD drive, this is the OS that boots, it presents the OS selection menu.
+       
     2. FAT32 partition, initially empty. When you select an OS, it populates this partition
        with the necessary boot files in order to boot into the selected OS. 
+       
     3. BTRFS partition, contains the linux partition of the boot OS and the installed OSes as
        BTRFS subvolumes
 
