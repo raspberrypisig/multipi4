@@ -1,3 +1,4 @@
 Raspberry Pi OS=raspbian
+Raspberry Pi OS 64-bit=raspbian64
 Ubuntu=ubuntu
 Debian=debian
