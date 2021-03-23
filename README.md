@@ -39,4 +39,31 @@ Currently, the following operating systems can be installed:
        
     3. BTRFS partition, contains the linux partition of the boot OS and the installed OSes as
        BTRFS subvolumes
+ 
+# Issues
+
+Major problem with booting Raspbian. Currently, I am using the same startup.elf/fixup.dat files for the different OSes, and that is causing major headaches
+because it can get old over time.
+
+Figured out a hack, but it is ugly.
+
+config.txt
+
+```
+# Enable DRM VC4 V3D driver on top of the dispmanx display stack
+# I had issues with this.
+# My hack: use different overlay, uncomment 
+
+#dtoverlay=vc4-fkms-v3d-pi4
+
+
+#then, comment these 2
+
+dtoverlay=vc4-fkms-v3d
+max_framebuffers=2
+
+# if it boots, that is good, if it shows piwiz, better, but you will find that vcgencmd version hangs. Bad, then change it back to original.
+# Hopefully, on the next boot, it is good again.
+```
+
 
