@@ -3,6 +3,8 @@
 Create a USB/SSD MultiBoot Disk for Raspberry Pi 4.
 
 My strong recommendation is boot from a SD card running Raspberry Pi OS 64-bit desktop from the Pi 4 itself, then install the software there.
+Raspberry Pi 64-bit OS can be downloaded from [here](https://downloads.raspberrypi.org/raspios_arm64/images/)
+
 
 # Installation
 
@@ -42,28 +44,11 @@ Currently, the following operating systems can be installed:
  
 # Issues
 
-Major problem with booting Raspbian. Currently, I am using the same startup.elf/fixup.dat files for the different OSes, and that is causing major headaches
-because it can get old over time.
-
-Figured out a hack, but it is ugly.
-
-config.txt
+### Raspbian
+For fullscreen, edit /boot/config.txt and make sure that
 
 ```
-# Enable DRM VC4 V3D driver on top of the dispmanx display stack
-# I had issues with this.
-# My hack: use different overlay, uncomment 
-
-#dtoverlay=vc4-fkms-v3d-pi4
-
-
-#then, comment these 2
-
-dtoverlay=vc4-fkms-v3d
-max_framebuffers=2
-
-# if it boots, that is good, if it shows piwiz, better, but you will find that vcgencmd version hangs. Bad, then change it back to original.
-# Hopefully, on the next boot, it is good again.
+disable_overscan=1
 ```
 
 
