@@ -212,8 +212,9 @@ image=$(echo $output | cut -f3 -d'|')
 #echo $name
 #echo $basedistro
 #echo $image
-#bash multipi4 "$basedistro" "$image" "$disk" "$name" 
-gnome-terminal --wait -- multipi4 ${ary["$basedistro"]} "$image" "$disk" "$name"
+#bash multipi4 "$basedistro" "$image" "$disk" "$name"
+mkdir -p /home/pi/Desktop/multipi4logs
+gnome-terminal --wait -- bash -c "multipi4 ${ary[$basedistro]} \"$image\" \"$disk\" \"$name\" 2>&1 | tee \"/home/pi/Desktop/multipi4logs/${name}.txt\""
 status=$?
 if [ $status -eq 0 ];
 then
