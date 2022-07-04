@@ -12,7 +12,7 @@ Raspberry Pi 64-bit OS can be downloaded from [here](https://downloads.raspberry
 Run the following command as normal user(eg.pi), not root user:
 
 ```sh
-curl -sSL https://bit.ly/37I1glx | bash -
+curl -sSL https://bit.ly/3yDwbwI | bash -
 ```
 
 # Prerequisites
