@@ -6,7 +6,7 @@ sudo apt install -y yad git gnome-terminal btrfs-progs
 sudo rm -rf /tmp/multipi4
 
 cd /tmp
-git clone -b dev https://github.com/raspberrypisig/multipi4
+git clone -b main https://github.com/raspberrypisig/multipi4
 cd multipi4
 sudo cp {multipi4,multipi4-gui,multipi4-preparedisk} /usr/local/bin
 sudo rsync -av etc/ /etc
