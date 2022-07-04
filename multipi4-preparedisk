@@ -64,5 +64,5 @@ umount usb2
 install_prerequisites
 prepare_disk $usb_disk
 prepare_first_partition $usb_disk
-prepare_second_partition $usb_disk
+#prepare_second_partition $usb_disk
 
