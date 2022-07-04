@@ -45,8 +45,6 @@ apt install -y qemu qemu-user-static binfmt-support systemd-container
 
 chmod +x $setupscript
 cp $setupscript usb3/$volname
-#Needed this for Ubuntu Mate
-systemd-machine-id-setup --root=usb3/$volname
 systemd-nspawn -D $containerdir /bin/bash -c "/setup.sh $volname"
 rm usb3/$volname/setup.sh
 }
