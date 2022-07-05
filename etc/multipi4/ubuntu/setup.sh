@@ -23,10 +23,17 @@ sed -i "s/PLACEHOLDER/$volname/" /etc/fstab
 
 #mv /etc/resolv.conf.old /etc/resolv.conf
 
-systemctl disable sssd
+#systemctl disable sssd
 
 apt-mark hold linux-headers-$VERSION linux-modules-$VERSION linux-image-$VERSION
 
+#echo -e "ubuntu\nubuntu\n" | passwd ubuntu
+#apt install -y network-manager
+useradd -G sudo -s /bin/bash -d /home/pi -m pi
+chown pi:pi /home/pi
+echo -e "raspberry\nraspberry\n" | passwd pi
+useradd -G sudo -s /bin/bash -d /home/pi -m ubuntu
+chown ubuntu:ubuntu /home/ubuntu
 echo -e "ubuntu\nubuntu\n" | passwd ubuntu
+#chpasswd <<< "ubuntu:ubuntu"
 
-apt install -y network-manager
