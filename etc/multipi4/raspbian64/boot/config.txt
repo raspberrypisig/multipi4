@@ -58,6 +58,9 @@ camera_auto_detect=1
 # Automatically load overlays for detected DSI displays
 display_auto_detect=1
 
+# Automatically load initramfs files, if found
+auto_initramfs=1
+
 # Enable DRM VC4 V3D driver
 dtoverlay=vc4-kms-v3d
 max_framebuffers=2
@@ -69,7 +72,7 @@ arm_64bit=1
 disable_overscan=1
 
 # added by raspberrypisig
-initramfs initramfs-btrfs
+#initramfs initramfs-btrfs
 dtparam=sd_poll_once=on
 
 [cm4]
