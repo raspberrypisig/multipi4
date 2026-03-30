@@ -12,23 +12,25 @@ raspi-config nonint do_configure_keyboard us
 
 echo btrfs >> /etc/initramfs-tools/modules
 
+update-initramfs -c -k all
+
 #VERSION=$(find /lib/modules -name *v8+ -exec basename {} \; )
 #mkinitramfs -o /boot/firmware/initramfs-btrfs -v $VERSION
 
-for initrd in /lib/modules/*; do
-    VERSION=$(basename "$initrd")
-    update-initramfs -c -k "$VERSION"
-done
+# for initrd in /lib/modules/*; do
+#     VERSION=$(basename "$initrd")
+#     update-initramfs -c -k "$VERSION"
+# done
 
-BOOT_DIR="/boot/firmware"
-#   [ -d "$BOOT_DIR" ] || BOOT_DIR="/boot"
+# BOOT_DIR="/boot/firmware"
+# #   [ -d "$BOOT_DIR" ] || BOOT_DIR="/boot"
 
-for initrd in /boot/initrd.img-*; do
-    case "$initrd" in
-        *-v8)    cp "$initrd" "$BOOT_DIR/initramfs8"      ;;
-        *-2712)  cp "$initrd" "$BOOT_DIR/initramfs_2712"  ;;
-    esac
-done
+# for initrd in /boot/initrd.img-*; do
+#     case "$initrd" in
+#         *-v8)    cp "$initrd" "$BOOT_DIR/initramfs8"      ;;
+#         *-2712)  cp "$initrd" "$BOOT_DIR/initramfs_2712"  ;;
+#     esac
+# done
 
 sed -i "s/PLACEHOLDER/$volname/" /boot/cmdline.txt 
 sed -i "s/PLACEHOLDER/$volname/" /etc/fstab
