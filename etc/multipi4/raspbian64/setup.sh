@@ -13,29 +13,24 @@ raspi-config nonint do_configure_keyboard us
 echo btrfs >> /etc/initramfs-tools/modules
 
 #VERSION=$(find /lib/modules -name *v8+ -exec basename {} \; )
-#mkinitramfs -o /boot/initramfs-btrfs -v $VERSION
+#mkinitramfs -o /boot/firmware/initramfs-btrfs -v $VERSION
+
 update-initramfs -u -k all
 
-# if [ -d "/boot/firmware" ]; then
-#     BOOT_DIR="/boot/firmware"
-    
-#     # Raspberry Pi OS auto-generates initramfs8 (for Pi4) or initramfs_2712 (for Pi5)
-#     # We copy it to match what MultiPi4's config.txt expects.
-#     if [ -f "$BOOT_DIR/initramfs8" ]; then
-#         cp "$BOOT_DIR/initramfs8" "$BOOT_DIR/initramfs-btrfs"
-#     elif [ -f "$BOOT_DIR/initramfs_2712" ]; then
-#         cp "$BOOT_DIR/initramfs_2712" "$BOOT_DIR/initramfs-btrfs"
-#     else
-#         # Fallback just in case
-#         LATEST_INITRD=$(ls -S /boot/initrd.img-* | head -n 1)
-#         cp "$LATEST_INITRD" "$BOOT_DIR/initramfs-btrfs"
-#     fi
-# else
-#     BOOT_DIR="/boot"
-#     LATEST_INITRD=$(ls -S /boot/initrd.img-* | head -n 1)
-#     cp "$LATEST_INITRD" "$BOOT_DIR/initramfs-btrfs"
-# fi
+for initrd in /lib/modules/*; do
+    VERSION=$(basename "$initrd")
+    update-initramfs -c -k "$VERSION"
+done
 
+BOOT_DIR="/boot/firmware"
+#   [ -d "$BOOT_DIR" ] || BOOT_DIR="/boot"
+
+for initrd in /boot/initrd.img-*; do
+    case "$initrd" in
+        *-v8)    cp "$initrd" "$BOOT_DIR/initramfs8"      ;;
+        *-2712)  cp "$initrd" "$BOOT_DIR/initramfs_2712"  ;;
+    esac
+done
 
 sed -i "s/PLACEHOLDER/$volname/" /boot/cmdline.txt 
 sed -i "s/PLACEHOLDER/$volname/" /etc/fstab
