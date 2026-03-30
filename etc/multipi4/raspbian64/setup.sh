@@ -15,8 +15,6 @@ echo btrfs >> /etc/initramfs-tools/modules
 #VERSION=$(find /lib/modules -name *v8+ -exec basename {} \; )
 #mkinitramfs -o /boot/firmware/initramfs-btrfs -v $VERSION
 
-update-initramfs -u -k all
-
 for initrd in /lib/modules/*; do
     VERSION=$(basename "$initrd")
     update-initramfs -c -k "$VERSION"
