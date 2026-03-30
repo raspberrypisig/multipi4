@@ -41,7 +41,7 @@ runcontainer() {
 setupscript="$1"
 containerdir="$2"
 volname="$3"
-apt install -y qemu qemu-user-static binfmt-support systemd-container
+apt install -y qemu-user-static binfmt-support systemd-container
 
 chmod +x $setupscript
 cp $setupscript usb3/$volname
