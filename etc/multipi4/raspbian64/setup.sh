@@ -32,7 +32,7 @@ update-initramfs -c -k all
 #     esac
 # done
 
-sed -i "s/PLACEHOLDER/$volname/" /boot/cmdline.txt 
+sed -i "s/PLACEHOLDER/$volname/" /boot/firmware/cmdline.txt 
 sed -i "s/PLACEHOLDER/$volname/" /etc/fstab
 
 # Disable kernel updates
