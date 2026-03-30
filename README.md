@@ -41,7 +41,11 @@ Currently, the following operating systems can be installed:
        
     3. BTRFS partition, contains the linux partition of the boot OS and the installed OSes as
        BTRFS subvolumes
- 
+
+# other repo
+
+https://github.com/raspberrypisig/multipi4-alpineboot
+
 # Issues
 
 ### Raspbian
