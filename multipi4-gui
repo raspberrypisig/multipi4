@@ -37,7 +37,7 @@ then
 return 1
 fi
 
-local partitiontypes=$(blkid|grep $disk|sed -r 's/.*TYPE="([^"]*)(.*)/\1/')
+local partitiontypes=$(blkid|sort|grep $disk|sed -r 's/.*TYPE="([^"]*)(.*)/\1/')
 readarray -t parray <<<$partitiontypes
 #declare -p parray
 
