@@ -19,9 +19,9 @@ if [ -d "/boot/firmware" ]; then
     
     # Raspberry Pi OS auto-generates initramfs8 (for Pi4) or initramfs_2712 (for Pi5)
     # We copy it to match what MultiPi4's config.txt expects.
-    if[ -f "$BOOT_DIR/initramfs8" ]; then
+    if [ -f "$BOOT_DIR/initramfs8" ]; then
         cp "$BOOT_DIR/initramfs8" "$BOOT_DIR/initramfs-btrfs"
-    elif[ -f "$BOOT_DIR/initramfs_2712" ]; then
+    elif [ -f "$BOOT_DIR/initramfs_2712" ]; then
         cp "$BOOT_DIR/initramfs_2712" "$BOOT_DIR/initramfs-btrfs"
     else
         # Fallback just in case
@@ -39,6 +39,7 @@ sed -i "s/PLACEHOLDER/$volname/" /boot/cmdline.txt
 sed -i "s/PLACEHOLDER/$volname/" /etc/fstab
 
 # Disable kernel updates
+#apt-mark hold linux-image-arm64 raspberrypi-kernel raspberrypi-bootloader || true
 #sudo apt-mark hold libraspberrypi-bin libraspberrypi-dev libraspberrypi-doc libraspberrypi0
 #sudo apt-mark hold raspberrypi-bootloader raspberrypi-kernel raspberrypi-kernel-headers
 
