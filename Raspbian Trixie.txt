@@ -1,0 +1,146 @@
++ '[' 4 -ne 4 ']'
++ distro=raspbian64
++ diskimage=/home/pi/Downloads/2025-12-04-raspios-trixie-arm64.img
++ disk=/dev/sda
++ name='Raspbian Trixie'
++ rm -rf /tmp/multipi4
++ mkdir /tmp/multipi4
++ cd /tmp/multipi4
++ umount /dev/sda1
+umount: /dev/sda1: not mounted.
++ umount /dev/sda2
+umount: /dev/sda2: not mounted.
++ umount /dev/sda3
+umount: /dev/sda3: not mounted.
++ distrodir=/etc/multipi4/raspbian64
++ setupscript=/etc/multipi4/raspbian64/setup.sh
++ bootdir=/etc/multipi4/raspbian64/boot
++ linuxdir=/etc/multipi4/raspbian64/linux
++ '[' -d /etc/multipi4/raspbian64 ']'
++ mkdir -p p1 p2 usb2 usb3
++ mount /dev/sda2 usb2
++ mount /dev/sda3 usb3
++ cd usb3
+++ createsubvolumename 'Raspbian Trixie'
+++ name='Raspbian Trixie'
+++ typeset -l newvolname
+++ newvolname=Raspbian_Trixie
+++ newvolname=raspbian_trixie
+++ echo @raspbian_trixie
++ volname=@raspbian_trixie
++ btrfs subvolume create @raspbian_trixie
+Create subvolume './@raspbian_trixie'
++ cd ..
++ '[' -f /etc/multipi4/raspbian64/copy.sh ']'
+++ losetup --show -Pf /home/pi/Downloads/2025-12-04-raspios-trixie-arm64.img
++ loop=/dev/loop0
++ mount -o ro /dev/loop0p1 p1
++ mount -o ro /dev/loop0p2 p2
++ rsync -a p2/ usb3/@raspbian_trixie
++ '[' -d usb3/@raspbian_trixie/boot/firmware ']'
++ cp -r p1/bcm2710-rpi-2-b.dtb p1/bcm2710-rpi-3-b.dtb p1/bcm2710-rpi-3-b-plus.dtb p1/bcm2710-rpi-cm0.dtb p1/bcm2710-rpi-cm3.dtb p1/bcm2710-rpi-zero-2.dtb p1/bcm2710-rpi-zero-2-w.dtb p1/bcm2711-rpi-400.dtb p1/bcm2711-rpi-4-b.dtb p1/bcm2711-rpi-cm4.dtb p1/bcm2711-rpi-cm4-io.dtb p1/bcm2711-rpi-cm4s.dtb p1/bcm2712d0-rpi-5-b.dtb p1/bcm2712-d-rpi-5-b.dtb p1/bcm2712-rpi-500.dtb p1/bcm2712-rpi-5-b.dtb p1/bcm2712-rpi-cm5-cm4io.dtb p1/bcm2712-rpi-cm5-cm5io.dtb p1/bcm2712-rpi-cm5l-cm4io.dtb p1/bcm2712-rpi-cm5l-cm5io.dtb p1/bootcode.bin p1/cmdline.txt p1/config.txt p1/fixup4cd.dat p1/fixup4.dat p1/fixup4db.dat p1/fixup4x.dat p1/fixup_cd.dat p1/fixup.dat p1/fixup_db.dat p1/fixup_x.dat p1/initramfs_2712 p1/initramfs8 p1/issue.txt p1/kernel_2712.img p1/kernel8.img p1/LICENCE.broadcom p1/meta-data p1/network-config p1/overlays p1/start4cd.elf p1/start4db.elf p1/start4.elf p1/start4x.elf p1/start_cd.elf p1/start_db.elf p1/start.elf p1/start_x.elf p1/user-data usb3/@raspbian_trixie/boot/firmware
++ cp -r /etc/multipi4/raspbian64/boot/cmdline.txt /etc/multipi4/raspbian64/boot/config.txt usb3/@raspbian_trixie/boot/firmware
++ rsync -a /etc/multipi4/raspbian64/linux/ usb3/@raspbian_trixie
++ runcontainer /etc/multipi4/raspbian64/setup.sh usb3/@raspbian_trixie @raspbian_trixie
++ setupscript=/etc/multipi4/raspbian64/setup.sh
++ containerdir=usb3/@raspbian_trixie
++ volname=@raspbian_trixie
++ apt install -y qemu-user-static binfmt-support systemd-container
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+qemu-user-static is already the newest version (1:7.2+dfsg-7+deb12u18).
+binfmt-support is already the newest version (2.2.2-2).
+systemd-container is already the newest version (252.39-1~deb12u1).
+0 upgraded, 0 newly installed, 0 to remove and 483 not upgraded.
++ chmod +x /etc/multipi4/raspbian64/setup.sh
++ cp /etc/multipi4/raspbian64/setup.sh usb3/@raspbian_trixie
++ systemd-nspawn -D usb3/@raspbian_trixie /bin/bash -c '/setup.sh @raspbian_trixie'
+Spawning container raspbiantrixie on /tmp/multipi4/usb3/@raspbian_trixie.
+Press ^] three times within 1s to kill container.
++ volname=@raspbian_trixie
++ echo MODULES=most
++ apt update
+[33m0% [Working][0m            Get:1 http://deb.debian.org/debian trixie InRelease [140 kB]
+[33m0% [1 InRelease 0 B/140 kB 0%] [Connecting to archive.raspberrypi.com][0m[33m                                                                      0% [Connecting to archive.raspberrypi.com][0m                                          Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+[33m0% [2 InRelease 39.8 kB/47.3 kB 84%] [Connecting to archive.raspberrypi.com][0m[33m                                                                            0% [Connecting to archive.raspberrypi.com][0m                                          Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+[33m0% [3 InRelease 0 B/43.4 kB 0%] [Connecting to archive.raspberrypi.com][0m[33m                                                                       0% [Connecting to archive.raspberrypi.com][0m[33m0% [Connecting to archive.raspberrypi.com (2a00:1098:a3::6)][0m[33m0% [Waiting for headers] [Connecting to archive.raspberrypi.com (2a00:1098:a3::[0m                                                                               Get:4 http://deb.debian.org/debian trixie/main armhf Packages [9237 kB]
+[33m0% [4 Packages 0 B/9237 kB 0%] [Connecting to archive.raspberrypi.com (2a00:109[0m[33m0% [4 Packages 88.0 kB/9237 kB 1%] [Connecting to archive.raspberrypi.com (2a00[0m[33m                                                                               0% [4 Packages 1612 kB/9237 kB 17%] [Waiting for headers][0m                                                         Get:5 http://archive.raspberrypi.com/debian trixie InRelease [54.9 kB]
+[33m0% [4 Packages 1664 kB/9237 kB 18%] [5 InRelease 2593 B/54.9 kB 5%][0m[33m0% [4 Packages 2965 kB/9237 kB 32%] [5 InRelease 40.9 kB/54.9 kB 75%][0m[33m                                                                     0% [4 Packages 3921 kB/9237 kB 42%][0m[33m29% [4 Packages 3989 kB/9237 kB 43%][0m                                    Get:6 http://archive.raspberrypi.com/debian trixie/main arm64 Packages [422 kB]
+[33m32% [4 Packages 4875 kB/9237 kB 53%] [6 Packages 4015 B/422 kB 1%][0m[33m36% [4 Packages 6265 kB/9237 kB 68%] [6 Packages 87.8 kB/422 kB 21%][0m[33m                                                                    41% [4 Packages 7598 kB/9237 kB 82%] [6 Packages 199 kB/422 kB 47%][0m[33m45% [4 Packages 8861 kB/9237 kB 96%] [6 Packages 382 kB/422 kB 90%][0m[33m                                                                   46% [4 Packages 9237 kB/9237 kB 100%][0m[33m                                     46% [Working][0m[33m46% [6 Packages store 0 B] [Waiting for headers] [Waiting for headers][0m                                                                      Get:7 http://deb.debian.org/debian trixie/main arm64 Packages [9607 kB]
+[33m46% [6 Packages store 0 B] [7 Packages 0 B/9607 kB 0%] [Waiting for headers][0m[33m                                                                            47% [7 Packages 25.6 kB/9607 kB 0%] [Waiting for headers][0m[33m47% [4 Packages store 0 B] [7 Packages 25.6 kB/9607 kB 0%] [Waiting for headers[0m                                                                               Get:8 http://archive.raspberrypi.com/debian trixie/main armhf Packages [418 kB]
+[33m50% [4 Packages store 0 B] [7 Packages 1237 kB/9607 kB 13%] [8 Packages 1175 B/[0m[33m55% [4 Packages store 0 B] [7 Packages 2488 kB/9607 kB 26%] [8 Packages 342 kB/[0m[33m                                                                               56% [4 Packages store 0 B] [7 Packages 2695 kB/9607 kB 28%][0m[33m61% [4 Packages store 0 B] [7 Packages 4406 kB/9607 kB 46%][0m[33m                                                           66% [7 Packages 5906 kB/9607 kB 61%][0m[33m66% [8 Packages store 0 B] [7 Packages 5906 kB/9607 kB 61%][0m[33m                                                           66% [7 Packages 6038 kB/9607 kB 63%][0m[33m71% [7 Packages 7454 kB/9607 kB 78%]                               2814 kB/s 3s[0m[33m76% [7 Packages 9142 kB/9607 kB 95%]                               2814 kB/s 2s[0m[33m77% [Waiting for headers]                                          2814 kB/s 2s[0m                                                                               Get:9 http://deb.debian.org/debian trixie/main Translation-en [6484 kB]
+[33m77% [9 Translation-en 0 B/6484 kB 0%]                              2814 kB/s 2s[0m[33m77% [7 Packages store 0 B] [9 Translation-en 62.6 kB/6484 kB 1%]   2814 kB/s 2s[0m[33m81% [7 Packages store 0 B] [9 Translation-en 1434 kB/6484 kB 22%]  2814 kB/s 1s[0m[33m85% [7 Packages store 0 B] [9 Translation-en 2754 kB/6484 kB 42%]  2814 kB/s 1s[0m[33m89% [7 Packages store 0 B] [9 Translation-en 4081 kB/6484 kB 63%]  2814 kB/s 0s[0m[33m94% [9 Translation-en 5505 kB/6484 kB 85%]                         2814 kB/s 0s[0m[33m97% [Working]                                                      2814 kB/s 0s[0m                                                                               Get:10 http://deb.debian.org/debian trixie/contrib arm64 Packages [48.4 kB]
+[33m97% [10 Packages 0 B/48.4 kB 0%]                                   2814 kB/s 0s[0m[33m97% [9 Translation-en store 0 B] [10 Packages 650 B/48.4 kB 1%]    2814 kB/s 0s[0m[33m97% [9 Translation-en store 0 B]                                   2814 kB/s 0s[0m                                                                               Get:11 http://deb.debian.org/debian trixie/contrib armhf Packages [42.6 kB]
+[33m97% [9 Translation-en store 0 B] [11 Packages 0 B/42.6 kB 0%]      2814 kB/s 0s[0m[33m97% [9 Translation-en store 0 B]                                   2814 kB/s 0s[0m                                                                               Get:12 http://deb.debian.org/debian-security trixie-security/main arm64 Packages [114 kB]
+[33m97% [9 Translation-en store 0 B] [12 Packages 10.5 kB/114 kB 9%]   2814 kB/s 0s[0m[33m97% [9 Translation-en store 0 B]                                   2814 kB/s 0s[0m                                                                               Get:13 http://deb.debian.org/debian-security trixie-security/main armhf Packages [109 kB]
+[33m97% [9 Translation-en store 0 B] [13 Packages 9217 B/109 kB 8%]    2814 kB/s 0s[0m[33m98% [9 Translation-en store 0 B]                                   2814 kB/s 0s[0m                                                                               Get:14 http://deb.debian.org/debian-security trixie-security/main Translation-en [73.3 kB]
+[33m                                                                               98% [9 Translation-en store 0 B] [14 Translation-en 5384 B/73.3 kB 7%][0m[33m98% [9 Translation-en store 0 B]                                   2814 kB/s 0s[0m[33m98% [9 Translation-en store 0 B]                                   2814 kB/s 0s[0m[33m98% [9 Translation-en store 0 B]                                   2814 kB/s 0s[0m[33m98% [Working]                                                      2814 kB/s 0s[0m[33m98% [10 Packages store 0 B]                                        2814 kB/s 0s[0m[33m99% [Working]                                                      2814 kB/s 0s[0m[33m99% [11 Packages store 0 B]                                        2814 kB/s 0s[0m[33m99% [Working]                                                      2814 kB/s 0s[0m[33m99% [12 Packages store 0 B]                                        2814 kB/s 0s[0m[33m99% [Working]                                                      2814 kB/s 0s[0m[33m99% [13 Packages store 0 B]                                        2814 kB/s 0s[0m[33m100% [Working]                                                     2814 kB/s 0s[0m[33m100% [14 Translation-en store 0 B]                                 2814 kB/s 0s[0m[33m100% [Working]                                                     2814 kB/s 0s[0m                                                                               Fetched 26.8 MB in 11s (2519 kB/s)
+Reading package lists... 0%Reading package lists... 0%Reading package lists... 0%Reading package lists... 19%Reading package lists... 34%Reading package lists... 36%Reading package lists... 36%Reading package lists... 56%Reading package lists... 71%Reading package lists... 71%Reading package lists... 82%Reading package lists... 94%Reading package lists... 94%Reading package lists... 94%Reading package lists... 94%Reading package lists... 94%Reading package lists... 94%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 95%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 96%Reading package lists... 97%Reading package lists... 97%Reading package lists... 97%Reading package lists... 97%Reading package lists... 98%Reading package lists... 98%Reading package lists... 98%Reading package lists... 98%                             Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 50%Building dependency tree... 50%Building dependency tree... 93%                                Reading state information... 0%Reading state information... 0%                                [1m281 packages can be upgraded. Run 'apt list --upgradable' to see them.
+[0m[1mNotice: [0mRepository 'http://deb.debian.org/debian trixie InRelease' changed its 'Version' value from '13.2' to '13.4'[0m
++ apt install -y initramfs-tools btrfs-progs
+Reading package lists... 0%Reading package lists... 100%                              Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 50%Building dependency tree... 50%Building dependency tree... 90%                                Reading state information... 0%Reading state information... 0%                                initramfs-tools is already the newest version (0.148.3+rpt2).
+Installing:
+[32m  btrfs-progs
+[0m
+Installing dependencies:
+[32m  libreiserfscore0t64
+[0m
+Suggested packages:
+  duperemove
+
+Summary:
+  Upgrading: 0, Installing: 2, Removing: 0, Not Upgrading: 281
+  Download size: 938 kB
+  Space needed: 5763 kB / 321 GB available
+
+[33m0% [Working][0m            Get:1 http://deb.debian.org/debian trixie/main arm64 libreiserfscore0t64 arm64 1:3.6.27-9 [75.6 kB]
+[33m0% [1 libreiserfscore0t64 664 B/75.6 kB 1%][0m[33m                                           16% [Working][0m             Get:2 http://deb.debian.org/debian trixie/main arm64 btrfs-progs arm64 6.14-1 [863 kB]
+[33m16% [2 btrfs-progs 0 B/863 kB 0%][0m[33m                                 100% [Working][0m              Fetched 938 kB in 1s (1782 kB/s)
+
+7[0;23r8[1ASelecting previously unselected package libreiserfscore0t64.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 120711 files and directories currently installed.)
+Preparing to unpack .../libreiserfscore0t64_1%3a3.6.27-9_arm64.deb ...
+7[24;0f[42m[30mProgress: [  0%][49m[39m [                                                          ] 87[24;0f[42m[30mProgress: [ 11%][49m[39m [██████▍                                                   ] 8Unpacking libreiserfscore0t64 (1:3.6.27-9) ...
+7[24;0f[42m[30mProgress: [ 22%][49m[39m [████████████▉                                             ] 8Selecting previously unselected package btrfs-progs.
+Preparing to unpack .../btrfs-progs_6.14-1_arm64.deb ...
+7[24;0f[42m[30mProgress: [ 33%][49m[39m [███████████████████▎                                      ] 8Unpacking btrfs-progs (6.14-1) ...
+7[24;0f[42m[30mProgress: [ 44%][49m[39m [█████████████████████████▊                                ] 8Setting up libreiserfscore0t64 (1:3.6.27-9) ...
+7[24;0f[42m[30mProgress: [ 56%][49m[39m [████████████████████████████████▏                         ] 87[24;0f[42m[30mProgress: [ 67%][49m[39m [██████████████████████████████████████▋                   ] 8Setting up btrfs-progs (6.14-1) ...
+7[24;0f[42m[30mProgress: [ 78%][49m[39m [█████████████████████████████████████████████             ] 87[24;0f[42m[30mProgress: [ 89%][49m[39m [███████████████████████████████████████████████████▌      ] 8Processing triggers for man-db (2.13.1-1) ...
+Processing triggers for initramfs-tools (0.148.3+rpt2) ...
+update-initramfs: Generating /boot/initrd.img-6.12.47+rpt-rpi-v8
+W: Couldn't identify type of root file system '/dev/sda3' for fsck hook
+'/boot/initrd.img-6.12.47+rpt-rpi-v8' -> '/boot/firmware/initramfs8'
+update-initramfs: Generating /boot/initrd.img-6.12.47+rpt-rpi-2712
+W: Couldn't identify type of root file system '/dev/sda3' for fsck hook
+'/boot/initrd.img-6.12.47+rpt-rpi-2712' -> '/boot/firmware/initramfs_2712'
+Processing triggers for libc-bin (2.41-12+rpt1) ...
+
+7[0;24r8[1A[J+ raspi-config nonint do_configure_keyboard us
+Reloading keymap. This may take a short while
+[0;1;31minput0: Failed to write 'change' to '/sys/devices/platform/scb/fd500000.pcie/pci0000:00/0000:00:00.0/0000:01:00.0/usb1/1-1/1-1.3/1-1.3:1.0/0003:045E:0750.0001/input/input0/uevent': Read-only file system[0m
++ echo btrfs
++ update-initramfs -u -k all
+update-initramfs: Generating /boot/initrd.img-6.12.47+rpt-rpi-v8
+W: Couldn't identify type of root file system '/dev/sda3' for fsck hook
+'/boot/initrd.img-6.12.47+rpt-rpi-v8' -> '/boot/firmware/initramfs8'
+update-initramfs: Generating /boot/initrd.img-6.12.47+rpt-rpi-2712
+W: Couldn't identify type of root file system '/dev/sda3' for fsck hook
+'/boot/initrd.img-6.12.47+rpt-rpi-2712' -> '/boot/firmware/initramfs_2712'
++ sed -i s/PLACEHOLDER/@raspbian_trixie/ /boot/firmware/cmdline.txt
++ sed -i s/PLACEHOLDER/@raspbian_trixie/ /etc/fstab
+Container raspbiantrixie exited successfully.
++ rm usb3/@raspbian_trixie/setup.sh
++ echo 'Raspbian Trixie'
++ '[' '!' -f /etc/multipi4/raspbian64/copy.sh ']'
++ umount p1 p2 usb2 usb3
++ rm -rf p1 p2 usb2 usb3
++ losetup -D /dev/loop0
++ rm -rf multios
++ echo Sleep for 20 seconds
+Sleep for 20 seconds
++ sleep 20
