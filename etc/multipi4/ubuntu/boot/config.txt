@@ -9,8 +9,8 @@ initramfs initrd.img followkernel
 
 # Enable the audio output, I2C and SPI interfaces on the GPIO header
 dtparam=audio=on
-dtparam=i2c_arm=on
-dtparam=spi=on
+#dtparam=i2c_arm=on
+#dtparam=spi=on
 
 # Enable the FKMS ("Fake" KMS) graphics overlay, enable the camera firmware
 # and allocate 128Mb to the GPU memory
